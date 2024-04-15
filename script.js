@@ -2,8 +2,8 @@ let highestZ = 1;
 
 class Paper {
   holdingPaper = false;
-  mouseTouchX = 0;
-  mouseTouchY = 0;
+  touchX = 0;
+  touchY = 0;
   mouseX = 0;
   mouseY = 0;
   prevMouseX = 0;
@@ -25,8 +25,8 @@ class Paper {
         this.velY = this.mouseY - this.prevMouseY;
       }
         
-      const dirX = e.clientX - this.mouseTouchX;
-      const dirY = e.clientY - this.mouseTouchY;
+      const dirX = e.clientX - this.touchX;
+      const dirY = e.clientY - this.touchY;
       const dirLength = Math.sqrt(dirX*dirX+dirY*dirY);
       const dirNormalizedX = dirX / dirLength;
       const dirNormalizedY = dirY / dirLength;
@@ -58,8 +58,8 @@ class Paper {
       highestZ += 1;
       
       if(e.button === 0) {
-        this.mouseTouchX = this.mouseX;
-        this.mouseTouchY = this.mouseY;
+        this.touchX = this.mouseX;
+        this.touchY = this.mouseY;
         this.prevMouseX = this.mouseX;
         this.prevMouseY = this.mouseY;
       }
@@ -67,9 +67,50 @@ class Paper {
         this.rotating = true;
       }
     });
+
+    paper.addEventListener('touchstart', (e) => {
+      if(this.holdingPaper) return; 
+      this.holdingPaper = true;
+
+      paper.style.zIndex = highestZ;
+      highestZ += 1;
+
+      const touch = e.touches[0];
+      this.touchX = touch.clientX;
+      this.touchY = touch.clientY;
+      this.prevMouseX = this.touchX;
+      this.prevMouseY = this.touchY;
+
+      e.preventDefault(); // Prevent default touch behavior (like scrolling)
+    });
+
     window.addEventListener('mouseup', () => {
       this.holdingPaper = false;
       this.rotating = false;
+    });
+
+    window.addEventListener('touchend', () => {
+      this.holdingPaper = false;
+      this.rotating = false;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!this.holdingPaper) return;
+
+      const touch = e.touches[0];
+
+      this.mouseX = touch.clientX;
+      this.mouseY = touch.clientY;
+
+      this.velX = this.mouseX - this.prevMouseX;
+      this.velY = this.mouseY - this.prevMouseY;
+
+      this.prevMouseX = this.mouseX;
+      this.prevMouseY = this.mouseY;
+
+      paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
+
+      e.preventDefault(); // Prevent default touch behavior (like scrolling)
     });
   }
 }
