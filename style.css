@@ -12,7 +12,6 @@ body {
   background-size: 1000px;
   background-image: url("https://www.psdgraphics.com/wp-content/uploads/2022/01/white-math-paper-texture.jpg");
   background-position: center center;
-  cursor: grab;
  
 }
 
@@ -27,6 +26,7 @@ body {
   box-shadow: 1px 15px 20px 0px rgba(0,0,0,0.5);
   
   position: absolute;
+  cursor: grab;
 }
 
 .paper.heart {
